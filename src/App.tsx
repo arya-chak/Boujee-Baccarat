@@ -19,7 +19,8 @@ function App() {
     playerHand,
     bankerHand,
     result,
-    dealInitialCards
+    dealInitialCards,
+    settleRound
   } = useGameStore()
 
   const {
@@ -44,12 +45,14 @@ function App() {
     placeBet(type, 10)
   }
 
-  // Auto-process payout when result is available
-  if (result && phase === 'RESULT') {
-    setTimeout(() => {
+  const handleContinue = () => {
+    if (result) {
+      // Process payout and add to history
       processPayout(result)
       addToHistory(result)
-    }, 500)
+      // Return to betting phase
+      settleRound()
+    }
   }
 
   return (
@@ -152,57 +155,74 @@ function App() {
 
           {/* Betting Controls */}
           <div className="space-y-4">
-            <div className="flex gap-4 justify-center">
-              <Button
-                onClick={() => handlePlaceBet(BetType.PLAYER)}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                Bet Player ($10)
-              </Button>
-              <Button
-                onClick={() => handlePlaceBet(BetType.BANKER)}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Bet Banker ($10)
-              </Button>
-              <Button
-                onClick={() => handlePlaceBet(BetType.TIE)}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Bet Tie ($10)
-              </Button>
-            </div>
-
-            {/* Current Bets */}
-            {currentBets.length > 0 && (
-              <div className="text-center text-white">
-                <p className="text-sm">Current Bets:</p>
-                <div className="flex gap-2 justify-center">
-                  {currentBets.map((bet, i) => (
-                    <span key={i} className="text-yellow-400">
-                      {bet.type}: ${bet.amount}
-                    </span>
-                  ))}
+            {/* Show betting buttons only during BETTING phase */}
+            {phase === 'BETTING' && (
+              <>
+                <div className="flex gap-4 justify-center">
+                  <Button
+                    onClick={() => handlePlaceBet(BetType.PLAYER)}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Bet Player ($10)
+                  </Button>
+                  <Button
+                    onClick={() => handlePlaceBet(BetType.BANKER)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Bet Banker ($10)
+                  </Button>
+                  <Button
+                    onClick={() => handlePlaceBet(BetType.TIE)}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    Bet Tie ($10)
+                  </Button>
                 </div>
-              </div>
+
+                {/* Current Bets */}
+                {currentBets.length > 0 && (
+                  <div className="text-center text-white">
+                    <p className="text-sm">Current Bets:</p>
+                    <div className="flex gap-2 justify-center">
+                      {currentBets.map((bet, i) => (
+                        <span key={i} className="text-yellow-400">
+                          {bet.type}: ${bet.amount}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-4 justify-center">
+                  <Button
+                    onClick={handleDeal}
+                    disabled={currentBets.length === 0}
+                    className="bg-green-600 hover:bg-green-700 text-xl px-8 py-6"
+                  >
+                    DEAL
+                  </Button>
+                  <Button
+                    onClick={clearAllBets}
+                    variant="outline"
+                    className="bg-white/10 hover:bg-white/20"
+                  >
+                    Clear Bets
+                  </Button>
+                </div>
+              </>
             )}
 
-            <div className="flex gap-4 justify-center">
-              <Button
-                onClick={handleDeal}
-                disabled={currentBets.length === 0 || phase !== 'BETTING'}
-                className="bg-green-600 hover:bg-green-700 text-xl px-8 py-6"
-              >
-                DEAL
-              </Button>
-              <Button
-                onClick={clearAllBets}
-                variant="outline"
-                className="bg-white/10 hover:bg-white/20"
-              >
-                Clear Bets
-              </Button>
-            </div>
+            {/* Show Continue button when result is ready */}
+            {phase === 'RESULT' && (
+              <div className="flex justify-center">
+                <Button
+                  onClick={handleContinue}
+                  className="bg-green-600 hover:bg-green-700 text-xl px-12 py-6"
+                >
+                  Continue to Next Round
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 

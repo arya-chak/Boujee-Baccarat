@@ -77,10 +77,8 @@ export const useGameStore = create<GameStore>((set, get) => {
         dealerPosition: position
       });
 
-      // Auto-advance to drawing phase
-      setTimeout(() => {
-        get().drawThirdCards();
-      }, 100);
+      // Immediately draw third cards (part of dealing phase)
+      get().drawThirdCards();
     },
 
     drawThirdCards: () => {
@@ -120,19 +118,12 @@ export const useGameStore = create<GameStore>((set, get) => {
         phase: GamePhase.RESULT
       });
 
-      // Auto-advance to settling phase
-      setTimeout(() => {
-        get().settleRound();
-      }, 100);
+      // Stop here - wait for user to click "Continue"
     },
 
     settleRound: () => {
-      set({ phase: GamePhase.SETTLING });
-
-      // After a short delay, return to betting phase
-      setTimeout(() => {
-        get().startNewRound();
-      }, 100);
+      // Immediately return to betting phase for next round
+      get().startNewRound();
     },
 
     resetGame: () => {
