@@ -4,8 +4,16 @@ import { usePlayerStore } from "@/stores/playerStore"
 import { getCardDisplay } from "@/game/cards"
 import { getOutcomeDescription } from "@/game/result"
 import { BetType } from "@/types"
+import { useEffect } from "react"
 
 function App() {
+  // Expose stores to window for debugging
+  useEffect(() => {
+    (window as any).gameStore = useGameStore;
+    (window as any).playerStore = usePlayerStore;
+    console.log('🎰 Baccarat Debug Mode Enabled!');
+    console.log('Try: gameStore.getState() or playerStore.getState()');
+  }, []);
   const {
     phase,
     playerHand,
