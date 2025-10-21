@@ -30,7 +30,8 @@ function App() {
     clearAllBets,
     processPayout,
     addToHistory,
-    statistics
+    statistics,
+    resetBalance
   } = usePlayerStore()
 
   const handleDeal = () => {
@@ -55,6 +56,12 @@ function App() {
     }
   }
 
+  const handleResetBalance = () => {
+    resetBalance()
+    // Also clear any current bets
+    clearAllBets()
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-900 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -69,7 +76,7 @@ function App() {
         </div>
 
         {/* Balance & Stats */}
-        <div className="bg-black/30 rounded-lg p-6 text-white">
+        <div className="bg-black/30 rounded-lg p-6 text-white space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-sm text-green-300">Balance</p>
@@ -93,6 +100,17 @@ function App() {
                 ${statistics.netProfit}
               </p>
             </div>
+          </div>
+
+          {/* Reset Balance Button (Testing) */}
+          <div className="flex justify-center pt-2 border-t border-white/10">
+            <Button
+              onClick={handleResetBalance}
+              variant="outline"
+              className="bg-orange-600/20 hover:bg-orange-600/30 border-orange-500/50 text-orange-300"
+            >
+              🔄 Reset Balance (Testing)
+            </Button>
           </div>
         </div>
 
